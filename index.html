@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <title>Face recognition</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="https://unpkg.com/jspsych@7.3.4"></script>
+
+  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-image-button-response@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych-contrib/plugin-pipe"></script>
+  <link href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css" rel="stylesheet" type="text/css" />
+
+  <style>
+    .jspsych-btn {
+      font-size: 18px;
+      padding: 15px 30px;
+      margin: 10px;
+      min-width: 100px;
+      cursor: pointer;
+      border-radius: 5px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    #jspsych-image-button-response-stimulus {
+      display: block;
+      margin: 0 auto;
+      max-width: 95%;
+    }
+
+    .jspsych-btn:hover {
+      background-color: #45a049;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .question-text {
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .fixation {
+      font-size: 60px;
+      text-align: center;
+      line-height: 1;
+    }
+
+    @media (max-width: 600px) {
+      .jspsych-btn {
+        font-size: 16px;
+        padding: 12px 25px;
+        min-width: 80px;
+      }
+
+      .question-text {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <script type='text/javascript'>
+
+    /* initialize jsPsych */
+    var jsPsych = initJsPsych({
+      use_webaudio: false,
+      on_finish: function () {
+        jsPsych.data.displayData();
+      }
+    });
+
+    /* create timeline */
+    var timeline = [];
+
+    /* init connection with pavlovia.org */
+    var pavlovia_init = {
+      type: "pavlovia",
+      command: "init"
+    };
+    timeline.push(pavlovia_init);
+
+    /* define welcome message trial */
+    var welcome = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: "<h2>Welcome to the experiment</h2><p>Press the button below to begin.</p>",
+      choices: ['Begin']
+    };
+    timeline.push(welcome);
+
+    /* define instructions trial */
+    var instructions = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: "<div style='max-width: 700px; margin: 0 auto; text-align: center;'>" +
+        "<h2>Instructions</h2>" +
+        "<p>In this experiment you will be presented with faces.</p>" +
+        "<p>Your task is to decide whether you recognize the face.</p>" +
+        "<p>Click <strong>'Yes'</strong> if you recognize the person</p>" +
+        "<p>Click <strong>'No'</strong> if you don't recognize the person</p>" +
+        "<p>Please respond as quickly and accurately as possible.</p>" +
+        "</div>",
+      choices: ['Start Experiment'],
+      post_trial_gap: 1000
+    };
+    timeline.push(instructions);
+
+    /* Define the image files you want to use */
+    /* Add all your image filenames from the img/ folder here */
+    var image_files = [
+      "img/test.jpg",
+      "img/test.jpg",
+      "img/test.jpg",
+      "img/test.jpg",
+      "img/test.jpg"
+      // Add more image files as needed
+    ];
+
+    /* Create test stimuli array from image files */
+    var test_stimuli = image_files.map(function (img) {
+      return {
+        stimulus: img,
+        data: {
+          test_part: 'test',
+          correct_response: "0"
+        }
+      };
+    });
+
+    /* Randomize the order of stimuli */
+    test_stimuli = jsPsych.randomization.shuffle(test_stimuli);
+
+    var fixation = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: '<div class="fixation">+</div>',
+      choices: 'NO_KEYS',
+      trial_duration: 200,
+      data: { test_part: 'fixation' }
+    }
+    var test = {
+      type: jsPsychImageButtonResponse,
+      stimulus: jsPsych.timelineVariable('stimulus'),
+      choices: ['Yes', 'No'],
+      button_html: '<button class="jspsych-btn">%choice%</button>',
+      data: jsPsych.timelineVariable('data'),
+      on_finish: function (data) {
+        data.recognized = data.button_pressed === data.correct_repsonse;
+      }
+    };
+
+    var test_procedure = {
+      timeline: [fixation, test],
+      timeline_variables: test_stimuli
+    }
+    timeline.push(test_procedure);
+
+    /* define debrief */
+    var debrief_block = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: function () {
+        console.log(jsPsych.data.get().values())
+        var trials = jsPsych.data.get().values().filter({ test_part: 'test' });
+        var total_trials = trials.count();
+        var recognized_count = trials.filter({ recognized: true }).count();
+        console.log(trials.filter({ recognized: true }))
+        var avg_rt = Math.round(trials.select('rt').mean());
+
+        return "<div style='text-align: center;'>" +
+          "<h2>Thank you for participating!</h2>" +
+          "<p>You recognized " + recognized_count + " out of " + total_trials + " faces.</p>" +
+          "<p>Your average response time was " + avg_rt + "ms.</p>" +
+          "<p>Press the button below to complete the experiment.</p>" +
+          "</div>";
+      },
+      choices: ['Finish']
+    };
+    timeline.push(debrief_block);
+
+    /* finish connection with pavlovia.org */
+    var pavlovia_finish = {
+      type: "pavlovia",
+      command: "finish",
+      participantId: "JSPSYCH-DEMO" // change to some real random id
+    };
+    timeline.push(pavlovia_finish);
+
+    /* start the experiment */
+    jsPsych.run(timeline);
+
+  </script>
+</body>
+
+</html>
