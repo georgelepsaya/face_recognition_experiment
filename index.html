@@ -76,25 +76,24 @@
 <body>
   <script type='text/javascript'>
 
-    /* initialize jsPsych */
+    // Initialise jsPsych
     var jsPsych = initJsPsych({
-      use_webaudio: false,
       on_finish: function () {
         jsPsych.data.displayData();
       }
     });
 
-    /* create timeline */
+    // Create the timeline
     var timeline = [];
 
-    /* init connection with pavlovia.org */
-    var pavlovia_init = {
-      type: "pavlovia",
-      command: "init"
-    };
-    timeline.push(pavlovia_init);
+    // Preload images
+    var preload = {
+      type: jsPsychPreload,
+      images: ["images/test.jpg"]
+    }
+    timeline.push(preload);
 
-    /* define welcome message trial */
+    // Define welcome message trial
     var welcome = {
       type: jsPsychHtmlButtonResponse,
       stimulus: "<h2>Welcome to the experiment</h2><p>Press the button below to begin.</p>",
@@ -102,100 +101,81 @@
     };
     timeline.push(welcome);
 
-    /* define instructions trial */
+    // Define instructions trial
     var instructions = {
       type: jsPsychHtmlButtonResponse,
       stimulus: "<div style='max-width: 700px; margin: 0 auto; text-align: center;'>" +
-        "<h2>Instructions</h2>" +
         "<p>In this experiment you will be presented with faces.</p>" +
-        "<p>Your task is to decide whether you recognize the face.</p>" +
         "<p>Click <strong>'Yes'</strong> if you recognize the person</p>" +
         "<p>Click <strong>'No'</strong> if you don't recognize the person</p>" +
         "<p>Please respond as quickly and accurately as possible.</p>" +
         "</div>",
       choices: ['Start Experiment'],
-      post_trial_gap: 1000
+      post_trial_gap: 200
     };
     timeline.push(instructions);
 
-    /* Define the image files you want to use */
-    /* Add all your image filenames from the img/ folder here */
-    var image_files = [
-      "img/test.jpg",
-      "img/test.jpg",
-      "img/test.jpg",
-      "img/test.jpg",
-      "img/test.jpg"
-      // Add more image files as needed
-    ];
+    // Define test stimuli: image and correct response
+    var test_stimuli = [
+      {
+        stimulus: "images/control/image_1_mb2_gb2.jpg",
+        effects: ["motion_blur_2", "gaussian_blur_2"],
+        correct_response: 1
+      },
+    ]
 
-    /* Create test stimuli array from image files */
-    var test_stimuli = image_files.map(function (img) {
-      return {
-        stimulus: img,
-        data: {
-          test_part: 'test',
-          correct_response: "0"
-        }
-      };
-    });
-
-    /* Randomize the order of stimuli */
-    test_stimuli = jsPsych.randomization.shuffle(test_stimuli);
-
+    // Create fixation trial
     var fixation = {
       type: jsPsychHtmlKeyboardResponse,
-      stimulus: '<div class="fixation">+</div>',
+      stimulus: '<div style="font-size: 60px">+</div>',
       choices: 'NO_KEYS',
       trial_duration: 200,
-      data: { test_part: 'fixation' }
+      data: {
+        task: 'fixation'
+      }
     }
+
+    // Create test trial
     var test = {
       type: jsPsychImageButtonResponse,
       stimulus: jsPsych.timelineVariable('stimulus'),
       choices: ['Yes', 'No'],
-      button_html: '<button class="jspsych-btn">%choice%</button>',
-      data: jsPsych.timelineVariable('data'),
-      on_finish: function (data) {
-        data.recognized = data.button_pressed === data.correct_repsonse;
+      data: {
+        task: 'response',
+        correct_response: jsPsych.timelineVariable('correct_response')
+      },
+      on_finish: function(data) {
+        data.correct = data.response === data.correct_response;
       }
-    };
+    }
 
+    // Define the test procedure
     var test_procedure = {
       timeline: [fixation, test],
-      timeline_variables: test_stimuli
+      timeline_variables: test_stimuli,
+      randomize_order: true
     }
+
+    // Add randomized test trials to the timeline
     timeline.push(test_procedure);
 
-    /* define debrief */
+    // Create a debrief block
     var debrief_block = {
       type: jsPsychHtmlButtonResponse,
       stimulus: function () {
-        console.log(jsPsych.data.get().values())
-        var trials = jsPsych.data.get().values().filter({ test_part: 'test' });
-        var total_trials = trials.count();
-        var recognized_count = trials.filter({ recognized: true }).count();
-        console.log(trials.filter({ recognized: true }))
-        var avg_rt = Math.round(trials.select('rt').mean());
+        var trials = jsPsych.data.get().filter({task: 'response'});
+        var correct_trials = trials.filter({correct: true});
+        var accuracy = Math.round(correct_trials.count() / trials.count() * 100);
 
-        return "<div style='text-align: center;'>" +
-          "<h2>Thank you for participating!</h2>" +
-          "<p>You recognized " + recognized_count + " out of " + total_trials + " faces.</p>" +
-          "<p>Your average response time was " + avg_rt + "ms.</p>" +
-          "<p>Press the button below to complete the experiment.</p>" +
-          "</div>";
+        return `<div style='text-align: center;'>
+          <h2>Thank you for participating!</h2>
+          <p>You responded correctly on ${accuracy}% of the trials.</p>
+          <p>Press the button below to complete the experiment.</p>
+          </div>`;
       },
       choices: ['Finish']
     };
     timeline.push(debrief_block);
-
-    /* finish connection with pavlovia.org */
-    var pavlovia_finish = {
-      type: "pavlovia",
-      command: "finish",
-      participantId: "JSPSYCH-DEMO" // change to some real random id
-    };
-    timeline.push(pavlovia_finish);
 
     /* start the experiment */
     jsPsych.run(timeline);
