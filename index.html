@@ -79,9 +79,9 @@
 
     // Initialise jsPsych
     var jsPsych = initJsPsych({
-      on_finish: function () {
-        jsPsych.data.displayData();
-      }
+      // on_finish: function () {
+      //   jsPsych.data.displayData();
+      // }
     });
 
     // Generate a unique filename
@@ -434,6 +434,7 @@
     timeline.push(debrief_block);
 
 
+    // Create trial to save data to OSF via Datapipe
     const save_data = {
       type: jsPsychPipe,
       action: "save",
@@ -441,6 +442,7 @@
       filename: filename,
       data_string: ()=>jsPsych.data.get().csv()
     };
+    timeline.push(save_data)
 
     /* start the experiment */
     jsPsych.run(timeline);
