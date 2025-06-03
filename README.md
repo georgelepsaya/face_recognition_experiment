@@ -1,3 +1,3 @@
 # Face recognition experiment
 
-Link: [](https://georgelepsaya.github.io/face_recognition_experiment)
+Link: [Take survey here](https://georgelepsaya.github.io/face_recognition_experiment)
