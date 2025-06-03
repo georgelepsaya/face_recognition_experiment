@@ -78,11 +78,7 @@
   <script type='text/javascript'>
 
     // Initialise jsPsych
-    var jsPsych = initJsPsych({
-      // on_finish: function () {
-      //   jsPsych.data.displayData();
-      // }
-    });
+    var jsPsych = initJsPsych();
 
     // Generate a unique filename
     const subject_id = jsPsych.randomization.randomID(12);
@@ -441,12 +437,11 @@
         var accuracy = Math.round(correct_trials.count() / trials.count() * 100);
 
         return `<div style='text-align: center;'>
-          <h2>Thank you for participating!</h2>
           <p>You responded correctly on ${accuracy}% of the trials.</p>
-          <p>Press the button below to complete the experiment.</p>
+          <p>Press the button below to submit results.</p>
           </div>`;
       },
-      choices: ['Finish']
+      choices: ['Submit results']
     };
     timeline.push(debrief_block);
 
@@ -460,6 +455,14 @@
       data_string: ()=>jsPsych.data.get().csv()
     };
     timeline.push(save_data)
+
+    // Define welcome message trial
+    var thank_you = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: "<h2>Thank you!</h2><p>Results have been saved.</p>",
+      choices: 'NO_KEYS',
+    };
+    timeline.push(thank_you);
 
     /* start the experiment */
     jsPsych.run(timeline);
