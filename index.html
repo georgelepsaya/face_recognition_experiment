@@ -84,6 +84,10 @@
       }
     });
 
+    // Generate a unique filename
+    const subject_id = jsPsych.randomization.randomID(12);
+    const filename = `${subject_id}.csv`;
+
     // Create the timeline
     var timeline = [];
 
@@ -372,7 +376,7 @@
     }
 
     // Add randomized test trials to the timeline
-    // timeline.push(test_procedure);
+    timeline.push(test_procedure);
 
     // Control question options
     var control_options = [
@@ -428,6 +432,15 @@
       choices: ['Finish']
     };
     timeline.push(debrief_block);
+
+
+    const save_data = {
+      type: jsPsychPipe,
+      action: "save",
+      experiment_id: "fbUFLzC3kj50",
+      filename: filename,
+      data_string: ()=>jsPsych.data.get().csv()
+    };
 
     /* start the experiment */
     jsPsych.run(timeline);
