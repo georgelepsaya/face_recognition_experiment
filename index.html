@@ -117,10 +117,187 @@
 
     // Define test stimuli: image and correct response
     var test_stimuli = [
+      // control images
       {
         stimulus: "images/control/image_1_mb2_gb2.jpg",
         effects: ["motion_blur_2", "gaussian_blur_2"],
         correct_response: 1
+      },
+      {
+        stimulus: "images/control/image_2_gn3.jpg",
+        effects: ["gaussian_noise_3"],
+        correct_response: 1
+      },
+      {
+        stimulus: "images/control/image_3_mb3.jpg",
+        effects: ["motion_blur_3"],
+        correct_response: 1
+      },
+      {
+        stimulus: "images/control/image_4_gn2.jpg",
+        effects: ["gaussian_noise_2"],
+        correct_response: 1
+      },
+      {
+        stimulus: "images/control/image_5_mb2_gn2.jpg",
+        effects: ["motion_blur_2", "gaussian_noise_2"],
+        correct_response: 1
+      },
+      {
+        stimulus: "images/control/image_6_gn2_p2.jpg",
+        effects: ["gaussian_noise_2", "pixelation_2"],
+        correct_response: 1
+      },
+      {
+        stimulus: "images/control/image_7_gb1.jpg",
+        effects: ["gaussian_blur_1"],
+        correct_response: 1
+      },
+      {
+        stimulus: "images/control/image_8_p3.jpg",
+        effects: ["pixelation_3"],
+        correct_response: 1
+      },
+      {
+        stimulus: "images/control/image_9_gb2.jpg",
+        effects: ["gaussian_blur_2"],
+        correct_response: 1
+      },
+      {
+        stimulus: "images/control/image_10_gb3.jpg",
+        effects: ["gaussian_blur_3"],
+        correct_response: 1
+      },
+      {
+        stimulus: "images/control/image_11_mb1.jpg",
+        effects: ["motion_blur_1"],
+        correct_response: 1
+      },
+      {
+        stimulus: "images/control/image_12_gn2_gb2.jpg",
+        effects: ["gaussian_noise_2", "gaussian_blur_2"],
+        correct_response: 1
+      },
+      {
+        stimulus: "images/control/image_13_mb2.jpg",
+        effects: ["motion_blur_2"],
+        correct_response: 1
+      },
+      {
+        stimulus: "images/control/image_14_gb2_p2.jpg",
+        effects: ["gaussian_blur_2", "pixelation_2"],
+        correct_response: 1
+      },
+      {
+        stimulus: "images/control/image_15_p1.jpg",
+        effects: ["pixelation_1"],
+        correct_response: 1
+      },
+      {
+        stimulus: "images/control/image_16_gn1.jpg",
+        effects: ["gaussian_noise_1"],
+        correct_response: 1
+      },
+      {
+        stimulus: "images/control/image_17_mb2_p2.jpg",
+        effects: ["motion_blur_2", "pixelation_2"],
+        correct_response: 1
+      },
+      {
+        stimulus: "images/control/image_18_p2.jpg",
+        effects: ["pixelation_2"],
+        correct_response: 1
+      },
+      // target images
+      {
+        stimulus: "images/target/image_1_mb2_gb2.jpg",
+        effects: ["motion_blur_2", "gaussian_blur_2"],
+        correct_response: 0
+      },
+      {
+        stimulus: "images/target/image_2_gn3.jpg",
+        effects: ["gaussian_noise_3"],
+        correct_response: 0
+      },
+      {
+        stimulus: "images/target/image_3_mb3.jpg",
+        effects: ["motion_blur_3"],
+        correct_response: 0
+      },
+      {
+        stimulus: "images/target/image_4_gn2.jpg",
+        effects: ["gaussian_noise_2"],
+        correct_response: 0
+      },
+      {
+        stimulus: "images/target/image_5_mb2_gn2.jpg",
+        effects: ["motion_blur_2", "gaussian_noise_2"],
+        correct_response: 0
+      },
+      {
+        stimulus: "images/target/image_6_gn2_p2.jpg",
+        effects: ["gaussian_noise_2", "pixelation_2"],
+        correct_response: 0
+      },
+      {
+        stimulus: "images/target/image_7_gb1.jpg",
+        effects: ["gaussian_blur_1"],
+        correct_response: 0
+      },
+      {
+        stimulus: "images/target/image_8_p3.jpg",
+        effects: ["pixelation_3"],
+        correct_response: 0
+      },
+      {
+        stimulus: "images/target/image_9_gb2.jpg",
+        effects: ["gaussian_blur_2"],
+        correct_response: 0
+      },
+      {
+        stimulus: "images/target/image_10_gb3.jpg",
+        effects: ["gaussian_blur_3"],
+        correct_response: 0
+      },
+      {
+        stimulus: "images/target/image_11_mb1.jpg",
+        effects: ["motion_blur_1"],
+        correct_response: 0
+      },
+      {
+        stimulus: "images/target/image_12_gn2_gb2.jpg",
+        effects: ["gaussian_noise_2", "gaussian_blur_2"],
+        correct_response: 0
+      },
+      {
+        stimulus: "images/target/image_13_mb2.jpg",
+        effects: ["motion_blur_2"],
+        correct_response: 0
+      },
+      {
+        stimulus: "images/target/image_14_gb2_p2.jpg",
+        effects: ["gaussian_blur_2", "pixelation_2"],
+        correct_response: 0
+      },
+      {
+        stimulus: "images/target/image_15_p1.jpg",
+        effects: ["pixelation_1"],
+        correct_response: 0
+      },
+      {
+        stimulus: "images/target/image_16_gn1.jpg",
+        effects: ["gaussian_noise_1"],
+        correct_response: 0
+      },
+      {
+        stimulus: "images/target/image_17_mb2_p2.jpg",
+        effects: ["motion_blur_2", "pixelation_2"],
+        correct_response: 0
+      },
+      {
+        stimulus: "images/target/image_18_p2.jpg",
+        effects: ["pixelation_2"],
+        correct_response: 0
       },
     ]
 
